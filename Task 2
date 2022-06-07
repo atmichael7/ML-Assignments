@@ -1,0 +1,23 @@
+wbcd <- read.csv(url("https://archive.ics.uci.edu/ml/machine-learning-databases/breast-cancer-wisconsin/wdbc.data"), header=FALSE)
+library(e1071)
+library(ISLR2)
+
+z = subset(wbcd, select=-V2)
+testRange = 483:596
+
+train.x = z[-testRange, ]
+test.x = z[testRange, ]
+
+train.y = wbcd[-testRange, 1]
+test.y = wbcd[testRange, 1]
+
+
+dat <- data.frame(x = train.x, y = as.factor(train.y))
+out <- svm(y ~ ., data = dat, kernel = "linear", cost = 10)
+summary(out)
+
+table(out$fitted, dat$y)
+
+dat.te <- data.frame(x = test.x, y = as.factor(test.y))
+pred.te <- predict(out, newdata = dat.te)
+table(pred.te, dat.te$y)
